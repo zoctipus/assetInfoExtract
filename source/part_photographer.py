@@ -61,16 +61,18 @@ def assign_material(obj, name):
     # Assign it to object
     if obj.data.materials:
         # assign to 1st material slot
+        temp_mat = obj.data.materials[0]
         obj.data.materials[0] = mat
+        obj.data.materials.append(temp_mat)
+
     else:
         # no slots
         obj.data.materials.append(mat)
 
     obj.active_material.diffuse_color = HEIGHLIGHT_COLOR
 
-def remove_material(name):
-    m = bpy.data.materials[name]
-    bpy.data.materials.remove(m)
+def remove_material(obj, name):
+    obj.data.materials.pop(index = 0)
 
 def fit_viewport_on_selection_with_current_view_angle():
     #center the viewport on the mesh
@@ -109,7 +111,7 @@ def save_all_angles_of_selected_obj(override, obj, object_name):
         render_path = f'{OBJECT_ID}/parts_photograph/{object_name}/{VIEWS_INFO[count]}.png'
         output_path = os.path.join(rootDir, render_path)
         bpy.data.images['Render Result'].save_render(output_path)
-        remove_material(material_name)
+        remove_material(obj, material_name)
 
 def get_bound_box(object_list):
     # Initialize lists to hold all corners
@@ -199,15 +201,17 @@ for area in bpy.context.screen.areas:
         space_data.shading.type = 'SOLID'
         break  # Stop after finding the first 3D View area
 
-set_all_transparent()
+
 objects = bpy.context.selected_objects
 count = 0
 for obj in bpy.context.scene.objects:
     if obj.type == 'MESH':
         # override = get_3d_view_context()
         # bpy.ops.view3d.view_selected(override)
+        set_all_transparent()
         save_all_angles_of_selected_obj(override, obj, object_name=obj.name)
         count += 1
+        print(f"done processing: {obj.name}")
         # if(count > 1):
         #     break
 
