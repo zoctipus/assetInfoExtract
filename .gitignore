@@ -1,0 +1,12 @@
+**/mobility/*
+**/output/*
+**/phobos/*
+
+**/mobility
+**/output
+**/phobos
+# No USD files allowed in the repo
+**/*.usd
+**/*.usda
+**/*.usdc
+**/*.usdz
